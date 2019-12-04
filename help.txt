@@ -1,0 +1,18 @@
+cat
+-see what is inside a file
+cat>
+-write a document
+cat>>
+-append (not implemented)
+mkdir
+-create a folder
+touch 
+-create a file
+cd 
+-change directory
+exit 
+-exit app
+ls
+-show all files and directory
+ls-l
+-show long
