@@ -207,14 +207,24 @@ int connect(char *s,char *pass){
 
 void changeUser(char *user){
     
+    FILE *pt;
     char *s;
+    char user1[30];
+    
+    pt=fopen("user.txt","rt");
+    if(pt==NULL){
+        printf("ERROR:2\nMissing file user");
+    }
     s=allocChar(30);
-    if(strcmp(user,"user")==0){
-        printf("Password:");
-        gets(s);
-        current_user_now=user; 
-        current_pass_now=s;
-        
+    //while(!eof(pt)){      
+      //  fgets(user,300,fil);
+        if(strcmp(user,"bogdan")==0){
+            printf("Password:");
+            gets(s);
+            current_user_now=user; 
+            current_pass_now=s;
+
+        //}
     }
     
 }
@@ -223,7 +233,25 @@ void changeUser(char *user){
 
 
 void helpF(){
-    printf("help not implemented!!");
+    FILE *fil;
+    
+    fil=fopen("help.txt","rt");
+    
+    if(fil==NULL){
+        printf("ERROR:1\nMissing file help");
+        exit(1);
+    }
+    
+    char s[300];
+    
+    printf("\n");
+    while(!feof(fil)){
+        fgets(s,300,fil);
+        printf("%s",s);
+    }
+    
+    fclose(fil);
+    printf("\n");
 }
 
 
@@ -287,6 +315,7 @@ file * createFile(char nume[30],folder * folderWereIs){
     
     create=fileAlloc(1);
     strcpy(create->name,nume);
+    create->owner=current_user_now;
     create->parent=folderWereIs;
     for(int i=0;i<30;i++){
         if(folderWereIs->file[i]==NULL){
@@ -310,6 +339,7 @@ folder * createFolder(char nume[30],char date[30] ,folder * current_folder){
         strcpy(start_folder->name,nume);
         strcpy(start_folder->date,date);
         start_folder->homeDirectory=start_folder;
+        start_folder->owner=current_user_now;
     
         return start_folder;  
     }else{
@@ -320,6 +350,7 @@ folder * createFolder(char nume[30],char date[30] ,folder * current_folder){
                 current_folder->next[i]=new;
                 strcpy(current_folder->next[i]->name,nume);
                 strcpy(current_folder->next[i]->date,date);
+                current_folder->owner=current_user_now;
                 current_folder->next[i]->homeDirectory=current_folder;
                 return current_folder;
             }
