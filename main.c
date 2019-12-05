@@ -22,9 +22,17 @@ struct file{
     struct folder *parent;
 };
 
+
+struct varname{
+    
+    char * name;
+    float number;
+    
+};
+
 typedef struct folder folder;
 typedef struct file file;
-
+typedef struct varname variable;
 
 
 /*
@@ -45,8 +53,8 @@ void showFilesFolders(folder * prime);
 char * allocChar(int n);
 char * reAlloc(char * your_var,int n);
 void program_running();
-void evaluateEnteredText(char *a);
-void lookForCommandsY(char * l,char * text);
+void evaluateEnteredText(char *a,variable * v);
+void lookForCommandsY(char * l,char * text,char *allText,variable * v);
 void changeFolder(char *s);
 file * createFile(char nume[30],folder * folderWereIs);
 file * fileAlloc(int n);
@@ -55,7 +63,10 @@ void helpF();
 int connect(char *s,char *pass);
 void verify_entry__();
 void changeUser(char *user);
-
+void createVariable(char *val,char *number,variable * v);
+variable * storeVarAlloc(int n);
+int searchVariable(char *s,variable * v);
+float searchVariableGET(char *s,variable * v);
 
 
 
@@ -82,8 +93,12 @@ int main(){
 
 
 
+
+
 void verify_entry__(){
     char *user,*password;
+
+    
     user=allocChar(30);
     current_user_now=allocChar(30);
     current_pass_now=allocChar(30);
@@ -110,6 +125,9 @@ void program_running(){
     folder * second;
     
     char a[30];
+    variable *v;
+    
+    v=storeVarAlloc(100);
     
     prime=createFolder("root","date",NULL);
     //showFilesFolders(prime);
@@ -122,7 +140,7 @@ void program_running(){
         
         printf(">");
         gets(a);
-        evaluateEnteredText(a);
+        evaluateEnteredText(a,v);
         
       //  second=createFolder(a,"date",second);
         // showFilesFolders(second);
@@ -133,7 +151,7 @@ void program_running(){
 
 
 
-void evaluateEnteredText(char *a){
+void evaluateEnteredText(char *a,variable * v){
     char b[30],*l,*text;
     if (a==NULL){
         printf(">");
@@ -142,7 +160,7 @@ void evaluateEnteredText(char *a){
         strcpy(b,a);
         l=strtok(b," ");
         text=strtok(NULL," ");
-        lookForCommandsY(l,text);
+        lookForCommandsY(l,text,a,v);
  //       printf(" \n--%s ",l);
     }
    // while(l!=NULL){
@@ -157,7 +175,9 @@ void evaluateEnteredText(char *a){
 
 
 
-void lookForCommandsY(char * l,char * text){
+void lookForCommandsY(char * l,char * text,char *allText,variable * v){
+    
+    
     
     
         if(strcmp(l,"ls")==0){
@@ -183,10 +203,74 @@ void lookForCommandsY(char * l,char * text){
             changeUser(text);
         }else if(strcmp(l,"whoami")==0){
             printf("%s\n",current_user_now);
+        }else if( l[0]=='$' && l[1]!=' '){
+             printf("%s",allText);
+             createVariable(l,text,v);        
         }else{
             printf("No command!!");
         }
     
+}
+
+
+
+
+void createVariable(char *val,char *number,variable * v){
+ 
+    
+    if(searchVariable(val,v)==0){
+        
+    
+
+    for(int i=0;i<100;i++){
+        if(v[i].name==NULL){
+            v[i].name=allocChar(30);
+            strcpy(v[i].name,val);
+            v[i].number=strtod(number,NULL);
+            break;
+        }
+    }
+    
+    
+    
+    printf("%f\n",v[0].number);
+    }else{
+       printf("%f\n", searchVariableGET(val,v));
+    }
+}
+
+
+int searchVariable(char *s,variable * v){
+    int ex=0;
+    float save_num;
+    for(int i=0;i<100;i++){
+        if(strcmp(v[i].name,s)==0){
+            ex=1;
+            save_num=v[i].number;
+        }
+    }
+    if(ex==1){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+
+float searchVariableGET(char *s,variable * v){
+    int ex=0;
+    float save_num;
+    for(int i=0;i<100;i++){
+        if(strcmp(v[i].name,s)==0){
+            ex=1;
+            save_num=v[i].number;
+        }
+    }
+    if(ex==1){
+        return save_num;
+    }else{
+        return 0;
+    }
 }
 
 
@@ -228,7 +312,6 @@ void changeUser(char *user){
     }
     
 }
-
 
 
 
@@ -423,6 +506,20 @@ folder * alloc(int n){
     }
     
     return alloc1;
+}
+
+
+
+variable * storeVarAlloc(int n){
+    
+    variable *var;
+    var=(variable*)malloc(n*sizeof(variable));
+                                          
+    if(var==NULL){
+        printf("No memory!");
+    }
+    
+   return var; 
 }
 
 
